@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Scam Simulator AI</title>
+    <meta name="description" content="Aprende a identificar estafas digitales con IA.">
+    <link rel="manifest" href="manifest.json">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="h-screen w-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
+
+    <!-- API Key Modal (First Run) -->
+    <div id="apiKeyModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden-screen">
+        <div class="glass p-6 rounded-2xl w-11/12 max-w-md slide-up">
+            <h2 class="text-xl font-bold mb-4 text-blue-400">Configuración Inicial</h2>
+            <p class="text-sm text-gray-300 mb-4">Para funcionar, esta app necesita una API Key de Google Gemini. Tu clave se guarda solo en tu dispositivo.</p>
+            <input type="password" id="apiKeyInput" placeholder="Pega tu API Key aquí" class="w-full p-3 rounded-lg bg-slate-800 border border-slate-600 text-white focus:border-blue-500 outline-none mb-4">
+            <button id="saveApiKeyBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition">Comenzar</button>
+            <p class="text-xs text-center mt-4 text-gray-500"><a href="https://aistudio.google.com/app/apikey" target="_blank" class="underline hover:text-blue-400">Obtener API Key gratis</a></p>
+        </div>
+    </div>
+
+    <!-- Onboarding Screen -->
+    <section id="onboardingScreen" class="w-full h-full flex flex-col items-center justify-center p-6 max-w-md mx-auto fade-in">
+        <div class="text-center mb-8">
+            <div class="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-500/30">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+            </div>
+            <h1 class="text-3xl font-bold text-white mb-2">Scam Simulator</h1>
+            <p class="text-gray-400">Entrena tu "sexto sentido" digital contra estafas reales.</p>
+        </div>
+
+        <div class="w-full space-y-4 glass p-6 rounded-2xl">
+            <div>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Tu Nombre</label>
+                <input type="text" id="userName" class="w-full p-3 rounded-lg bg-slate-800 border border-slate-600 text-white focus:border-blue-500 outline-none" placeholder="Ej: Juan">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Tu Edad</label>
+                <input type="number" id="userAge" class="w-full p-3 rounded-lg bg-slate-800 border border-slate-600 text-white focus:border-blue-500 outline-none" placeholder="Ej: 25">
+            </div>
+            <button id="startBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition mt-4">Ingresar</button>
+        </div>
+    </section>
+
+    <!-- Scenario Selection Screen -->
+    <section id="scenarioScreen" class="w-full h-full flex flex-col p-4 max-w-md mx-auto hidden-screen fade-in">
+        <header class="flex justify-between items-center mb-6 mt-2">
+            <div>
+                <h2 class="text-xl font-bold text-white">Escenarios</h2>
+                <p class="text-xs text-gray-400">Elige un desafío para practicar</p>
+            </div>
+            <button id="settingsBtn" class="p-2 rounded-full hover:bg-slate-700 text-gray-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+            </button>
+        </header>
+
+        <div id="scenariosList" class="flex-1 overflow-y-auto space-y-4 pb-20">
+            <!-- Scenarios will be injected here -->
+        </div>
+    </section>
+
+    <!-- Chat Interface -->
+    <section id="chatScreen" class="w-full h-full flex flex-col max-w-md mx-auto hidden-screen bg-slate-900">
+        <!-- Chat Header -->
+        <header class="glass p-4 flex items-center justify-between z-10">
+            <div class="flex items-center gap-3">
+                <button id="backToScenariosBtn" class="text-gray-400 hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <div>
+                    <h3 id="chatTitle" class="font-bold text-white">Desconocido</h3>
+                    <span class="flex items-center gap-1 text-xs text-green-400">
+                        <span class="w-2 h-2 bg-green-500 rounded-full"></span> En línea
+                    </span>
+                </div>
+            </div>
+            <button id="analyzeBtn" class="bg-red-500/20 text-red-400 border border-red-500/50 px-3 py-1 rounded-full text-xs font-bold hover:bg-red-500 hover:text-white transition">
+                🚨 DETECTAR ESTAFA
+            </button>
+        </header>
+
+        <!-- Chat Messages -->
+        <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col">
+            <!-- Messages injected here -->
+        </div>
+
+        <!-- Chat Input -->
+        <div class="p-4 glass">
+            <form id="chatForm" class="flex gap-2">
+                <input type="text" id="messageInput" class="flex-1 bg-slate-800 text-white rounded-full px-4 py-2 border border-slate-700 focus:border-blue-500 outline-none" placeholder="Escribe tu respuesta..." autocomplete="off">
+                <button type="submit" class="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition flex-shrink-0 w-10 h-10 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Feedback Screen -->
+    <section id="feedbackScreen" class="w-full h-full flex flex-col p-6 max-w-md mx-auto hidden-screen fade-in overflow-y-auto">
+        <div class="glass rounded-2xl p-6 mb-6 border-l-4 border-l-yellow-500">
+            <h2 class="text-2xl font-bold text-white mb-2">Análisis de Seguridad</h2>
+            <div id="feedbackContent" class="text-gray-300 space-y-4 text-sm">
+                <!-- Feedback injected here -->
+            </div>
+        </div>
+        <button id="restartBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition mb-4">Probar otro escenario</button>
+    </section>
+
+    <!-- PWA Install Button (Floating) -->
+    <button id="installPwaBtn" class="hidden fixed bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-lg shadow-blue-600/40 z-50 animate-bounce">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+        </svg>
+    </button>
+
+    <script src="js/gemini-client.js"></script>
+    <script src="js/pwa-handler.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
