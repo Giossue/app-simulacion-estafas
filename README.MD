@@ -184,12 +184,18 @@ Proyecto desarrollado como parte del curso de Simulación/Programación Móvil d
 - Doménica Arias
 - Mateo Ladino
 - Josué Pintado
+- Jennifer Alcivar
+- Edison Aucatoma
+- Gilson Yanez
+- Sebastián Valverde
+- Vicente Caizaguano
+- Rimax Chela
+- Rinna Muguicha
 
 ## 📄 Licencia
 
 Proyecto educativo sin fines de lucro. Código abierto para fines académicos.
 
 ---
-
 
 *"Conocimiento que protege: cada simulación es un paso hacia un Ecuador más seguro digitalmente."*
